@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Seoul OS — the personal portfolio of Seoul, a software engineering student exploring AI, iOS, product design, and futuristic experiences." />
+  <title>Seoul OS — Seoul</title>
+  <script>
+    (() => {
+      let saved = null;
+      try { saved = localStorage.getItem("seoul-os-theme"); } catch (_) {}
+      const systemDark = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)").matches : false;
+      const theme = saved || (systemDark ? "dark" : "light");
+      document.documentElement.classList.add(`theme-${theme}`);
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="sections.css" />
+</head>
+<body>
+  <!-- ambient cursor light -->
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- soft background field -->
+  <div class="bg-field" aria-hidden="true">
+    <div class="orb-bloom bloom-1"></div>
+    <div class="orb-bloom bloom-2"></div>
+    <div class="orb-bloom bloom-3"></div>
+    <div class="grid-veil"></div>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  </div>
+
+  <!-- top nav -->
+  <header class="nav" id="nav">
+    <a class="nav-mark" href="#top">
+      <span class="mark-dot"></span>
+      <span class="mark-text">Seoul<span class="mark-os">OS</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Work</a>
+      <a href="#journey">Journey</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-label="Switch to dark mode">
+        <span class="theme-toggle__track" aria-hidden="true">
+          <span class="theme-toggle__icon theme-toggle__icon--sun">
+            <svg viewBox="0 0 24 24"><path d="M12 4.2V2m0 20v-2.2M4.2 12H2m20 0h-2.2M6.35 6.35 4.8 4.8m14.4 14.4-1.55-1.55m0-11.3L19.2 4.8M4.8 19.2l1.55-1.55M12 7.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2Z"/></svg>
+          </span>
+          <span class="theme-toggle__icon theme-toggle__icon--moon">
+            <svg viewBox="0 0 24 24"><path d="M20 14.7A7.8 7.8 0 0 1 9.3 4a8.5 8.5 0 1 0 10.7 10.7Z"/></svg>
+          </span>
+          <span class="theme-toggle__thumb"></span>
+        </span>
+      </button>
+      <a class="nav-cta" href="#contact">Let's talk</a>
+    </div>
+  </header>
+
+  <!-- side social rail -->
+  <aside class="rail" aria-label="Social links">
+    <a href="mailto:vy.seoul25@kit.edu.kh" class="rail-link" data-tip="Email" aria-label="Email">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm.5 1.6 7.5 5.1 7.5-5.1"/></svg>
+    </a>
+    <a href="https://www.linkedin.com" target="_blank" rel="noopener" class="rail-link" data-tip="LinkedIn" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.94 7.5a1.94 1.94 0 1 1 0-3.88 1.94 1.94 0 0 1 0 3.88zM5.3 9h3.28v10.5H5.3zM10.6 9h3.14v1.44h.05c.44-.83 1.5-1.7 3.1-1.7 3.32 0 3.93 2.18 3.93 5.02v5.74h-3.28v-5.09c0-1.21-.02-2.77-1.69-2.77-1.69 0-1.95 1.32-1.95 2.68v5.18H10.6z"/></svg>
+    </a>
+    <a href="https://github.com" target="_blank" rel="noopener" class="rail-link" data-tip="GitHub" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.04 1.53 1.04.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+    </a>
+    <a href="https://instagram.com" target="_blank" rel="noopener" class="rail-link" data-tip="Instagram" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2zm0 1.9a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4zM16.5 6.9a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zM7.4 4h9.2A3.4 3.4 0 0 1 20 7.4v9.2a3.4 3.4 0 0 1-3.4 3.4H7.4A3.4 3.4 0 0 1 4 16.6V7.4A3.4 3.4 0 0 1 7.4 4zm0 1.9c-.83 0-1.5.67-1.5 1.5v9.2c0 .83.67 1.5 1.5 1.5h9.2c.83 0 1.5-.67 1.5-1.5V7.4c0-.83-.67-1.5-1.5-1.5z"/></svg>
+    </a>
+    <span class="rail-line" aria-hidden="true"></span>
+    <span class="rail-loc">Cambodia</span>
+  </aside>
+
+  <main id="top">
+    <!-- ============ HERO: SEOUL CORE ============ -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="eyebrow-dot"></span> Seoul OS · v1.0</span>
+          <h1 class="hero-title">Hi, I'm <span class="grad name">Seoul.</span></h1>
+          <p class="hero-sub">I design, build, and imagine digital products that feel meaningful.</p>
+          <p class="hero-desc">A software engineering student exploring AI, iOS, product design, and futuristic user experiences.</p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">View My Work</a>
+            <a href="#contact" class="btn btn-ghost">Contact Me</a>
+            <a href="#" class="btn btn-ghost" download>Download Resume</a>
+          </div>
+          <div class="hero-meta">
+            <span class="meta-pill"><span class="meta-ico">✦</span> Based in Cambodia</span>
+            <a class="meta-pill" href="mailto:vy.seoul25@kit.edu.kh"><span class="meta-ico">✉</span> vy.seoul25@kit.edu.kh</a>
+          </div>
+        </div>
+
+        <!-- Seoul Core 3D stage -->
+        <div class="core-stage" id="coreStage">
+          <div class="core-scene" id="coreScene">
+            <div class="core-map" id="coreMap">
+              <!-- concentric system rings -->
+              <div class="sys-ring sr-1"></div>
+              <div class="sys-ring sr-rainbow"></div>
+              <div class="sys-ring sr-2"></div>
+              <div class="sys-ring sr-ticks"></div>
+              <div class="sys-ring sr-3"></div>
+
+              <!-- central core -->
+              <div class="core-orb">
+                <span class="co-shine"></span>
+                <span class="co-pulse"></span>
+              </div>
+
+              <!-- saturn-style planet ring -->
+              <div class="core-ring" aria-hidden="true"></div>
+
+              <!-- center identity -->
+              <div class="core-center">
+                <span class="cc-name">SEOUL<span class="cc-os">OS</span></span>
+                <span class="cc-sub">core system</span>
+              </div>
+
+              <!-- inner ring · capability modules -->
+              <div class="node node--in" style="--x:0px;--y:-150px"   data-depth="12"><span>AI</span></div>
+              <div class="node node--in" style="--x:-130px;--y:-75px" data-depth="12"><span>Code</span></div>
+              <div class="node node--in" style="--x:-130px;--y:75px"  data-depth="12"><span>Design</span></div>
+              <div class="node node--in" style="--x:0px;--y:150px"    data-depth="12"><span>Product</span></div>
+              <div class="node node--in" style="--x:130px;--y:-75px"  data-depth="12"><span>iOS</span></div>
+              <div class="node node--in" style="--x:130px;--y:75px"   data-depth="12"><span>Vision</span></div>
+
+              <!-- outer ring · system sections -->
+              <a class="node node--out" href="#projects" style="--x:0px;--y:-222px"   data-depth="20"><span>Projects</span></a>
+              <a class="node node--out" href="#journey"  style="--x:211px;--y:-69px"  data-depth="20"><span>Experience</span></a>
+              <a class="node node--out" href="#skills"   style="--x:130px;--y:179px"  data-depth="20"><span>Skills</span></a>
+              <a class="node node--out" href="#contact"  style="--x:-130px;--y:179px" data-depth="20"><span>Social</span></a>
+              <a class="node node--out" href="#contact"  style="--x:-211px;--y:-69px" data-depth="20"><span>Contact</span></a>
+
+              <!-- floating chips · outer orbit, evenly spaced (r258, interlocked with inner modules) -->
+              <div class="chip-float chip-float--m" style="--x:129px;--y:-223px;--d:0"  data-depth="40"><span>React</span></div>
+              <div class="chip-float"               style="--x:258px;--y:0px;--d:1"     data-depth="46"><span>SwiftUI</span></div>
+              <div class="chip-float chip-float--m" style="--x:129px;--y:223px;--d:2"   data-depth="38"><span>Firebase</span></div>
+              <div class="chip-float chip-float--m" style="--x:-129px;--y:223px;--d:3"  data-depth="42"><span>Codex</span></div>
+              <div class="chip-float"               style="--x:-258px;--y:0px;--d:4"    data-depth="46"><span>Claude</span></div>
+              <div class="chip-float chip-float--m" style="--x:-129px;--y:-223px;--d:5" data-depth="40"><span>Cambodia</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-popup" id="missionPopup" role="dialog" aria-modal="true" aria-labelledby="missionTitle" aria-hidden="true">
+        <div class="mission-card">
+          <button class="mission-close" id="missionClose" type="button" aria-label="Close mission popup">×</button>
+          <span class="mission-kicker">Seoul Profile</span>
+          <h2 id="missionTitle">Mission Unlocked</h2>
+          <p>Welcome to Seoul OS — my personal universe of code, design, and AI.</p>
+          <div class="mission-actions">
+            <a href="#projects" class="btn btn-primary">View My Work</a>
+            <a href="#contact" class="btn btn-ghost">Contact Me</a>
+            <a href="#" class="btn btn-ghost" download>Download Resume</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="gravity-status" id="gravityStatus" aria-live="polite"></p>
+
+      <button class="space-companion" id="spaceCompanion" type="button" aria-label="Open Seoul profile">
+        <span class="ship-trail" aria-hidden="true"></span>
+        <span class="ship-body" aria-hidden="true">
+          <span class="ship-nose"></span>
+          <span class="ship-window"></span>
+          <span class="ship-wing ship-wing--left"></span>
+          <span class="ship-wing ship-wing--right"></span>
+          <span class="ship-engine"></span>
+        </span>
+      </button>
+
+      <a class="scroll-hint" href="#about" aria-label="Scroll down">
+        <span class="scroll-track"><span class="scroll-thumb"></span></span>
+        <span class="scroll-word">Scroll</span>
+      </a>
+    </section>
+
+    <!-- ============ STACKED CARD DECK ============ -->
+    <section class="deck" data-deck-motion="staggered">
+      <!-- ============ SECTION 1 · SELECTED WORK ============ -->
+      <article class="stack-card work" id="projects">
+        <div class="card-skin">
+          <div class="work-head">
+            <span class="sec-eyebrow">02 · Selected Work</span>
+            <h2 class="sec-title">Selected <span class="grad">Work</span></h2>
+            <p class="sec-sub">A collection of products, systems, and visual identities I've built with code, design, and AI.</p>
+          </div>
+
+          <div class="work-rail" id="workRail">
+            <div class="work-track" id="workTrack">
+              <a class="project" data-hue="265" href="#" tabindex="0">
+                <div class="project-img"><span class="project-emoji">🥗</span></div>
+                <h4>Healthy AI</h4>
+                <p>AI-powered food &amp; nutrition companion that reasons about meals.</p>
+                <div class="tool-row"><span>SwiftUI</span><span>AI</span><span>Firebase</span></div>
+                <span class="case-btn">View Case Study →</span>
+              </a>
+              <a class="project" data-hue="210" href="#" tabindex="0">
+                <div class="project-img"><span class="project-emoji">🌾</span></div>
+                <h4>Phsar Srae</h4>
+                <p>Agriculture marketplace connecting Cambodian farmers to buyers.</p>
+                <div class="tool-row"><span>React</span><span>Node.js</span><span>Design</span></div>
+                <span class="case-btn">View Case Study →</span>
+              </a>
+              <a class="project" data-hue="190" href="#" tabindex="0">
+                <div class="project-img"><span class="project-emoji">📱</span></div>
+                <h4>Smartphone Shop</h4>
+                <p>Clean commerce experience for a local phone retailer.</p>
+                <div class="tool-row"><span>Flutter</span><span>Firebase</span></div>
+                <span class="case-btn">View Case Study →</span>
+              </a>
+              <a class="project" data-hue="285" href="#" tabindex="0">
+                <div class="project-img"><span class="project-emoji">🌾</span></div>
+                <h4>Apsara Rice Branding</h4>
+                <p>Premium brand identity &amp; packaging for a heritage rice label.</p>
+                <div class="tool-row"><span>Branding</span><span>Figma</span></div>
+                <span class="case-btn">View Case Study →</span>
+              </a>
+              <a class="project" data-hue="150" href="#" tabindex="0">
+                <div class="project-img"><span class="project-emoji">🌿</span></div>
+                <h4>Durian Farm</h4>
+                <p>Digital presence &amp; ordering for a premium durian farm.</p>
+                <div class="tool-row"><span>React</span><span>UI/UX</span></div>
+                <span class="case-btn">View Case Study →</span>
+              </a>
+              <a class="project" data-hue="230" href="#" tabindex="0">
+                <div class="project-img"><span class="project-emoji">⚡</span></div>
+                <h4>B Tech Electronics</h4>
+                <p>Modern storefront &amp; catalog for an electronics brand.</p>
+                <div class="tool-row"><span>Flutter</span><span>Design System</span></div>
+                <span class="case-btn">View Case Study →</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="work-cta-wrap">
+            <div class="work-cta" id="workCta">
+              <div class="work-cta__deco" aria-hidden="true"></div>
+              <div class="work-cta__text">
+                <h3>I am with you in <span class="grad">every step.</span></h3>
+                <p>From idea, design, and development to launch — I build digital products with care.</p>
+              </div>
+              <div class="work-cta__actions">
+                <a class="btn btn-ghost" href="#projects">See All Projects →</a>
+                <a class="btn btn-primary" href="#about">Contact Now →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ============ SECTION 2 · ABOUT / PROFILE ============ -->
+      <article class="stack-card profile" id="about">
+        <div class="card-skin">
+          <div class="profile-head">
+            <span class="sec-eyebrow">03 · About Me</span>
+          </div>
+          <div class="profile-card">
+            <div class="profile-grid">
+              <!-- left: photo + facts + socials -->
+              <aside class="profile-left">
+                <div class="profile-photo">
+                  <!-- Drop your photo at assets/seoul.jpg to replace the monogram -->
+                  <img class="profile-photo__img" src="assets/seoul.jpg" alt="Vy Seoul" onerror="this.remove()" />
+                  <span class="profile-photo__mono">VS</span>
+                  <span class="profile-badge"><i></i> Available for work</span>
+                </div>
+                <ul class="profile-info">
+                  <li><span class="ico">📍</span> Phnom Penh, Cambodia</li>
+                  <li><span class="ico">🏛</span> Kirirom Institute of Technology</li>
+                  <li><span class="ico">💻</span> Software Engineering</li>
+                  <li><span class="ico">🎯</span> Focus: iOS Development, AI, UI/UX</li>
+                  <li><span class="ico">✉</span> <a href="mailto:vy.seoul25@kit.edu.kh">vy.seoul25@kit.edu.kh</a></li>
+                </ul>
+                <div class="profile-socials">
+                  <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.94 7.5a1.94 1.94 0 1 1 0-3.88 1.94 1.94 0 0 1 0 3.88zM5.3 9h3.28v10.5H5.3zM10.6 9h3.14v1.44h.05c.44-.83 1.5-1.7 3.1-1.7 3.32 0 3.93 2.18 3.93 5.02v5.74h-3.28v-5.09c0-1.21-.02-2.77-1.69-2.77-1.69 0-1.95 1.32-1.95 2.68v5.18H10.6z"/></svg>
+                  </a>
+                  <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.04 1.53 1.04.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2zm0 1.9a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4zM16.5 6.9a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zM7.4 4h9.2A3.4 3.4 0 0 1 20 7.4v9.2a3.4 3.4 0 0 1-3.4 3.4H7.4A3.4 3.4 0 0 1 4 16.6V7.4A3.4 3.4 0 0 1 7.4 4zm0 1.9c-.83 0-1.5.67-1.5 1.5v9.2c0 .83.67 1.5 1.5 1.5h9.2c.83 0 1.5-.67 1.5-1.5V7.4c0-.83-.67-1.5-1.5-1.5z"/></svg>
+                  </a>
+                  <a href="https://t.me" target="_blank" rel="noopener" aria-label="Telegram">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.9 4.3 18.6 19.6c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-4.9 9-8.1c.4-.3-.1-.5-.6-.2L6.1 13.4l-4.8-1.5c-1-.3-1-1 .2-1.5L20.6 2.9c.9-.3 1.6.2 1.3 1.4z"/></svg>
+                  </a>
+                  <a class="profile-resume" href="#" download aria-label="Download résumé" style="width:auto;padding:0 16px;gap:8px;font-size:var(--fs-small);font-weight:var(--fw-title);color:var(--ink);">Résumé ↓</a>
+                </div>
+              </aside>
+
+              <!-- right: intro + skills + experience + focus -->
+              <div class="profile-right">
+                <header class="profile-intro">
+                  <h2>Meet <span class="grad">Vy Seoul</span></h2>
+                  <p class="profile-role">iOS Developer · AI Builder · Product Design Learner</p>
+                  <p class="profile-desc">I'm a software engineering student based in Phnom Penh, Cambodia, building meaningful digital products with code, design, and AI.</p>
+                </header>
+
+                <div class="profile-block" id="skills-inline">
+                  <h4>Skills</h4>
+                  <div class="profile-pills">
+                    <span>SwiftUI / iOS</span><span>React</span><span>Firebase</span><span>Node.js</span>
+                    <span>UI/UX Design</span><span>Figma</span><span>AI Tools: Claude, Codex, Prompting</span>
+                  </div>
+                </div>
+
+                <div class="profile-block" id="journey-inline">
+                  <h4>Experience / Projects</h4>
+                  <ul class="exp-list">
+                    <li><strong>Healthy AI</strong> — AI calorie tracker app</li>
+                    <li><strong>Phsar Srae</strong> — agriculture marketplace</li>
+                    <li><strong>Smartphone Shop</strong> — ecommerce system</li>
+                    <li><strong>Apsara Rice Branding</strong> — brand &amp; trade marketing</li>
+                    <li><strong>B Tech Electronics</strong> — catalog app</li>
+                  </ul>
+                </div>
+
+                <div class="profile-block">
+                  <h4>Current Focus</h4>
+                  <div class="focus-grid">
+                    <div class="focus-card"><span class="ico">📱</span><h5>Building</h5><p>iOS apps</p></div>
+                    <div class="focus-card"><span class="ico">🤖</span><h5>Learning</h5><p>AI agents</p></div>
+                    <div class="focus-card"><span class="ico">✨</span><h5>Improving</h5><p>UI/UX systems</p></div>
+                    <div class="focus-card"><span class="ico">🚀</span><h5>Creating</h5><p>portfolio-level projects</p></div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ============ SECTION 3 · SKILLS ============ -->
+      <article class="stack-card" id="skills">
+        <div class="card-skin">
+          <div class="card-head card-head--center">
+            <span class="card-tag">04 · Skills</span>
+            <h2>My <span class="grad">creative system.</span></h2>
+            <p class="card-lead">Tools, interfaces, and product thinking that support the apps and experiences I build.</p>
+          </div>
+          <div class="skill-grid">
+            <div class="skill-group">
+              <h3><span class="grp-ico">⌘</span> Code</h3>
+              <div class="pill-cloud">
+                <span class="pill">SwiftUI</span><span class="pill">React</span><span class="pill">Firebase</span><span class="pill">Node.js</span><span class="pill">Flutter</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <h3><span class="grp-ico">✦</span> Design</h3>
+              <div class="pill-cloud">
+                <span class="pill">UI/UX</span><span class="pill">Figma</span><span class="pill">Branding</span><span class="pill">Motion</span><span class="pill">Visual Systems</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <h3><span class="grp-ico">◌</span> AI</h3>
+              <div class="pill-cloud">
+                <span class="pill">Claude</span><span class="pill">Codex</span><span class="pill">Prompting</span><span class="pill">Prototyping</span><span class="pill">Automation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ============ SECTION 4 · JOURNEY ============ -->
+      <article class="stack-card" id="journey">
+        <div class="card-skin">
+          <div class="card-head card-head--center">
+            <span class="card-tag">05 · Journey</span>
+            <h2>Experience / <span class="grad">Projects</span></h2>
+            <p class="card-lead">A short timeline of the products and studies that shaped my portfolio.</p>
+          </div>
+          <ul class="timeline">
+            <li class="t-item"><span class="t-year">Healthy AI</span><p>AI calorie tracker app</p></li>
+            <li class="t-item"><span class="t-year">Phsar Srae</span><p>Agriculture marketplace for Cambodian farmers and buyers.</p></li>
+            <li class="t-item"><span class="t-year">Smartphone Shop</span><p>Ecommerce system for a local phone retailer.</p></li>
+            <li class="t-item"><span class="t-year">Apsara Rice Branding</span><p>Brand identity and packaging for a heritage rice label.</p></li>
+            <li class="t-item"><span class="t-year">B Tech Electronics</span><p>Catalog app for an electronics brand.</p></li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ============ SECTION 5 · CONTACT ============ -->
+      <article class="stack-card" id="contact">
+        <div class="card-skin card-skin--contact">
+          <span class="card-tag">06 · Contact</span>
+          <h2 class="sec-title">Let's build <span class="grad">something useful.</span></h2>
+          <div class="portal" aria-hidden="true">
+            <span class="portal-ring pr-1"></span>
+            <span class="portal-ring pr-2"></span>
+            <span class="portal-ring pr-3"></span>
+            <span class="portal-core"></span>
+          </div>
+          <div class="social-grid">
+            <a class="social" href="mailto:vy.seoul25@kit.edu.kh">Email</a>
+            <a class="social" href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="social" href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+            <a class="social social--cta" href="#projects">View Projects</a>
+          </div>
+          <p class="foot">© <span id="year"></span> Seoul · Designed &amp; built in Cambodia 🇰🇭</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
