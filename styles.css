@@ -165,6 +165,8 @@ body,
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html,
+body { overflow-x: clip; }
 
 body {
   margin: 0;

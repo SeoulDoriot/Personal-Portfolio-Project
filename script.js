@@ -933,6 +933,164 @@
   }, { threshold: 0.18 });
   cards.forEach((c) => cardIO.observe(c));
 
+  /* ---------- orbit journey scroll system ---------- */
+  const orbitJourney = document.getElementById("orbit-journey");
+  if (orbitJourney) {
+    const orbitRoute = orbitJourney.querySelector(".orbit-route");
+    const orbitTraveler = orbitJourney.querySelector("#orbitTraveler");
+    const orbitPlanets = Array.from(orbitJourney.querySelectorAll(".orbit-planet"));
+    const orbitCards = Array.from(orbitJourney.querySelectorAll(".orbit-card"));
+    const orbitDesktop = () => window.matchMedia("(min-width: 981px)").matches && !reduceMotion;
+    let orbitActive = -1;
+    let orbitTargetProgress = 0;
+    let orbitSmoothProgress = 0;
+    let orbitRaf = 0;
+
+    const orbitEase = (t) => {
+      const p = clamp(t, 0, 1);
+      return p * p * (3 - 2 * p);
+    };
+
+    const mix = (a, b, t) => a + (b - a) * t;
+
+    function setOrbitActive(nextIndex) {
+      if (nextIndex === orbitActive) return;
+      if (orbitActive >= 0) {
+        orbitCards[orbitActive]?.classList.add("is-leaving");
+        window.setTimeout(() => orbitCards[orbitActive]?.classList.remove("is-leaving"), 420);
+      }
+      orbitActive = nextIndex;
+      orbitPlanets.forEach((planet, index) => planet.classList.toggle("is-active", index === orbitActive));
+      orbitCards.forEach((card, index) => card.classList.toggle("is-active", index === orbitActive));
+    }
+
+    function positionPlanet(planet, index, progress) {
+      const count = Math.max(1, orbitPlanets.length);
+      const segment = 1 / count;
+      const start = index * segment;
+      const end = start + segment;
+      const prewarm = clamp((progress - start + 0.08) / 0.08, 0, 1);
+      let x = 0;
+      let y = 180;
+      let scale = 0.42 + prewarm * 0.16;
+      let opacity = prewarm * 0.34;
+      let rotate = progress * 420 + index * 23;
+      let z = 4;
+      let state = "waiting";
+
+      const doneSlotX = -190 + index * 48;
+      const doneSlotY = -150 + index * 34;
+
+      if (progress >= start && progress <= end) {
+        const local = clamp((progress - start) / segment, 0, 1);
+        const orbitPart = clamp(local / 0.78, 0, 1);
+        const exitPart = orbitEase(clamp((local - 0.72) / 0.28, 0, 1));
+        const angle = Math.PI / 2 - orbitPart * Math.PI * 2.45;
+        const radiusX = 145 + index * 10;
+        const radiusY = 76 + index * 5;
+        const orbitX = Math.cos(angle) * radiusX;
+        const orbitY = Math.sin(angle) * radiusY;
+        x = mix(orbitX, doneSlotX, exitPart);
+        y = mix(orbitY, doneSlotY, exitPart);
+        scale = mix(0.92 + Math.sin(orbitPart * Math.PI) * 0.18, 0.62, exitPart);
+        opacity = 1;
+        rotate = progress * 920 + index * 35;
+        z = 10;
+        state = "active";
+      } else if (progress > end) {
+        const drift = progress * Math.PI * 10 + index * 1.4;
+        x = doneSlotX + Math.cos(drift) * 16;
+        y = doneSlotY + Math.sin(drift * 0.86) * 9;
+        scale = 0.58;
+        opacity = 0.58;
+        rotate = progress * 520 + index * 41;
+        z = 6 + index;
+        state = "done";
+      }
+
+      planet.classList.toggle("is-done", state === "done");
+      planet.classList.toggle("is-waiting", state === "waiting");
+      planet.style.setProperty("--planet-x", `${x.toFixed(2)}px`);
+      planet.style.setProperty("--planet-y-pos", `${y.toFixed(2)}px`);
+      planet.style.setProperty("--planet-scale", scale.toFixed(3));
+      planet.style.setProperty("--planet-opacity", opacity.toFixed(3));
+      planet.style.setProperty("--planet-rotate", `${rotate.toFixed(2)}deg`);
+      planet.style.setProperty("--planet-z", z);
+    }
+
+    function renderOrbitJourney(progress) {
+      if (!orbitDesktop()) {
+        orbitPlanets.forEach((planet, index) => {
+          planet.classList.toggle("is-active", index === 0);
+          planet.classList.remove("is-done", "is-waiting");
+          planet.removeAttribute("style");
+        });
+        orbitCards.forEach((card, index) => card.classList.toggle("is-active", index === 0));
+        return;
+      }
+
+      const activeIndex = clamp(Math.floor(progress * orbitPlanets.length), 0, orbitPlanets.length - 1);
+      setOrbitActive(activeIndex);
+
+      orbitPlanets.forEach((planet, index) => positionPlanet(planet, index, progress));
+      if (orbitRoute) orbitRoute.style.setProperty("--orbit-spin", `${(progress * 860).toFixed(2)}deg`);
+      if (orbitTraveler) orbitTraveler.style.setProperty("--orbit-spin", `${(progress * 520).toFixed(2)}deg`);
+    }
+
+    function animateOrbitJourney() {
+      orbitRaf = 0;
+      orbitSmoothProgress += (orbitTargetProgress - orbitSmoothProgress) * 0.2;
+      if (Math.abs(orbitTargetProgress - orbitSmoothProgress) < 0.0008) {
+        orbitSmoothProgress = orbitTargetProgress;
+      }
+
+      renderOrbitJourney(orbitSmoothProgress);
+
+      if (Math.abs(orbitTargetProgress - orbitSmoothProgress) > 0.0008) {
+        orbitRaf = window.requestAnimationFrame(animateOrbitJourney);
+      }
+    }
+
+    function updateOrbitJourney() {
+      if (!orbitDesktop()) {
+        renderOrbitJourney(0);
+        return;
+      }
+
+      const rect = orbitJourney.getBoundingClientRect();
+      const travel = Math.max(1, rect.height - window.innerHeight);
+      orbitTargetProgress = clamp(-rect.top / travel, 0, 1);
+      if (!orbitRaf) orbitRaf = window.requestAnimationFrame(animateOrbitJourney);
+    }
+
+    orbitPlanets.forEach((planet, index) => {
+      planet.addEventListener("mouseenter", () => planet.classList.add("is-hovered"));
+      planet.addEventListener("mouseleave", () => planet.classList.remove("is-hovered"));
+      planet.addEventListener("focus", () => setOrbitActive(index));
+    });
+
+    if (!isTouch && !reduceMotion) {
+      orbitCards.forEach((card) => {
+        card.addEventListener("pointermove", (event) => {
+          if (!card.classList.contains("is-active")) return;
+          const rect = card.getBoundingClientRect();
+          const px = (event.clientX - rect.left) / rect.width - 0.5;
+          const py = (event.clientY - rect.top) / rect.height - 0.5;
+          card.style.setProperty("--orbit-tilt-x", `${(px * 7).toFixed(2)}deg`);
+          card.style.setProperty("--orbit-tilt-y", `${(-py * 6).toFixed(2)}deg`);
+        });
+        card.addEventListener("pointerleave", () => {
+          card.style.setProperty("--orbit-tilt-x", "0deg");
+          card.style.setProperty("--orbit-tilt-y", "0deg");
+        });
+      });
+    }
+
+    updateOrbitJourney();
+    window.addEventListener("scroll", updateOrbitJourney, { passive: true });
+    window.addEventListener("resize", updateOrbitJourney);
+  }
+
   /* ---------- selected work scroll-linked reveal ---------- */
   const workSection = document.getElementById("projects");
   if (workSection) {
